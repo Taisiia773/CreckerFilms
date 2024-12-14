@@ -1,5 +1,11 @@
 model Film{
     id Int @id @default(autoincrement())
     name String
-    description String
+    rating Float
+    year Int
+    language String
+    country String
+    age Int
+    genre Genre @relation(fields: [genreId], references: [id])
+    genreId Int
 }
