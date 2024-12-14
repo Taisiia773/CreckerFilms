@@ -2,5 +2,5 @@ model Genre{
     id Int @id @default(autoincrement())
     name String
     description String
-    films Film[]
+    film Film[]
 }

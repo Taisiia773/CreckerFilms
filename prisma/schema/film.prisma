@@ -6,6 +6,6 @@ model Film{
     language String
     country String
     age Int
-    genre Genre @relation(fields: [genreId], references: [id])
+    Genre Genre @relation(fields: [genreId], references: [id])
     genreId Int
 }
