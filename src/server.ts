@@ -1,12 +1,14 @@
 import express, { Express, Request, Response } from "express";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 
+import path from "path";
+const prisma = new PrismaClient()
 
 import filmRouter from "./FilmApp/filmRouter"
 import genreRouter from "./GenreApp/genreRouter"
 
 const HOST = 'localhost'
-const PORT = 8000
+const PORT = 5000
 
 const app = express()
 
@@ -25,6 +27,20 @@ app.get("/", (req: Request ,res: Response) => {
 })
 
 
-app.listen(PORT, HOST, () => {
+
+// Получение всех фильмов
+app.get('/list', async (req, res) => {
+    try {
+      const movies = await prisma.film.findMany();
+      const genres = await prisma.genre.findMany();
+      const list = [movies, genres] // Fetch all movies from the database
+      res.json(list);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch movies' });
+    }
+  });
+
+
+  app.listen(PORT, HOST, () => {
     console.log(`Listening on a port http://${HOST}:${PORT}`)
 })
