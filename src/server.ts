@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
+
 import path from "path";
 const prisma = new PrismaClient()
 
@@ -10,17 +11,20 @@ import genreRouter from "./GenreApp/genreRouter"
 const HOST = 'localhost'
 const PORT = 5000
 
+
 const app = express()
+const cors = require('cors')
 
 app.use(express.json())
+app.use(cors())
 
 app.set("view engine", "ejs")
 
 app.set("views", path.resolve(__dirname, "./templates"))
 app.use("/static/", express.static(path.resolve(__dirname, "./static")))
 
-app.use("/film", filmRouter)
-app.use("/genre/", genreRouter)
+// app.use("/film", filmRouter)
+// app.use("/genre/", genreRouter)
 
 app.get("/", (req: Request ,res: Response) => {
     res.render("main")
@@ -28,17 +32,37 @@ app.get("/", (req: Request ,res: Response) => {
 
 
 
-// Получение всех фильмов
-app.get('/list', async (req, res) => {
+
+app.get('/genres', async (req, res) => {
     try {
-      const movies = await prisma.film.findMany();
       const genres = await prisma.genre.findMany();
-      const list = [movies, genres] // Fetch all movies from the database
-      res.json(list);
+      res.json(genres);
     } catch (err) {
       res.status(500).json({ error: 'Failed to fetch movies' });
     }
-  });
+  })
+
+  app.get('/films', async (req, res) => {
+    try {
+      const movies = await prisma.film.findMany();
+      res.json(movies);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch movies' });
+    }
+  })
+
+  app.get('/film/:id', async (req, res) => {
+    try {
+      const film = await prisma.film.findUnique({
+        where: {
+          id: Number(req.params.id)
+        }
+      })
+      res.json(film)
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to find film' });
+    }
+  })
 
 
   app.listen(PORT, HOST, () => {
