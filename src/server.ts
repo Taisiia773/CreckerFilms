@@ -42,6 +42,19 @@ app.get('/genres', async (req, res) => {
     }
   })
 
+  app.get('/genre/:id', async (req, res) => {
+    try {
+      const genre = await prisma.genre.findUnique({
+        where: {
+          id: Number(req.params.id)
+        }
+      })
+      res.json(genre)
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to find genre' });
+    }
+  })
+
   app.get('/films', async (req, res) => {
     try {
       const movies = await prisma.film.findMany();
